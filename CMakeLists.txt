@@ -30,15 +30,14 @@ set(IMGUI_SOURCES	"src/ImGui/imgui.cpp"
 					"src/ImGui/imgui_widgets.cpp")
 
 set(HEADER_FILES ${IMGUI_HEADERS})
-set(SOURCE_FILES ${IMGUI_SOURCES} "src/Main.cpp")
+set(SOURCE_FILES ${IMGUI_SOURCES})
 
-add_executable (Dear-ImGui-App ${HEADER_FILES} ${SOURCE_FILES})
+add_executable (Dear-ImGui-App "src/Main.cpp" ${HEADER_FILES} ${SOURCE_FILES})
+add_executable (Demo-Analysis "src/DemoAnalysis.cpp" ${HEADER_FILES} ${SOURCE_FILES})
 
 # TODO: Add tests and install targets if needed.
-target_link_libraries(Dear-ImGui-App glfw)
-target_link_libraries(Dear-ImGui-App glm)
-target_link_libraries(Dear-ImGui-App glad)
-
-target_link_libraries(Dear-ImGui-App OpenGL::GL)
-
+target_link_libraries(Dear-ImGui-App glfw glm glad OpenGL::GL)
 target_include_directories(Dear-ImGui-App PUBLIC "dependencies/glad")
+
+target_link_libraries(Demo-Analysis glfw glm glad OpenGL::GL)
+target_include_directories(Demo-Analysis PUBLIC "dependencies/glad")

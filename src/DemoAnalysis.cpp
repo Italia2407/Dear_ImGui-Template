@@ -4,34 +4,11 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
+#include "ImGui/imgui.h"
+#include "ImGui/imgui_impl_glfw.h"
+#include "ImGui/imgui_impl_opengl3.h"
+
 glm::vec3 clearColour = glm::vec3(0.4f, 0.5f, 0.65f);
-
-int nGonSides = 3;
-float nGonAngle = glm::radians(45.0f);
-
-glm::vec3 nGonColour = glm::vec3(1.0f, 0.65f, 0.15f);
-
-glm::vec2 nGonPosition = glm::vec2(0.0f, 0.0f);
-glm::vec2 nGonScale = glm::vec2(1.0f, 1.0f);
-
-void DrawNGon(int numSides, float angle, glm::vec3 colour, glm::vec2 position, glm::vec2 scale)
-{
-    glColor3f(colour.r, colour.g, colour.b);
-    glBegin(GL_POLYGON);
-
-    for (int i = 0; i < numSides; i++)
-    {
-        float pointAngle = i * (360.0f / numSides) + angle;
-        glVertex2f((glm::cos(glm::radians(pointAngle)) * scale.x) + position.x, (glm::sin(glm::radians(pointAngle)) * scale.y) + position.y);
-    }
-
-    glEnd();
-    glColor3f(1.0f, 1.0f, 1.0f);
-}
-void DrawNGon(int numSides, float angle, glm::vec3 colour)
-{
-    DrawNGon(numSides, angle, colour, glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
-}
 
 int main()
 {
@@ -54,7 +31,16 @@ int main()
 
     // Initialise ImGui
     {
-        
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO* _io = &ImGui::GetIO(); (void)_io;
+
+        // Set style to rounded
+        ImGui::StyleColorsClassic();
+        ImGui::GetStyle().WindowRounding = 8.0f;
+
+        ImGui_ImplGlfw_InitForOpenGL(windowHandle, true);
+        ImGui_ImplOpenGL3_Init("#version 330");
     }
 
     while (!glfwWindowShouldClose(windowHandle))
@@ -63,7 +49,11 @@ int main()
 
         // Update Here
         {
-            
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
+            ImGui::ShowDemoWindow();
         }
 
         glClearColor(clearColour.r, clearColour.g, clearColour.b, 1.0f);
@@ -74,16 +64,19 @@ int main()
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
             glOrtho(-4.0f, 4.0f, -4.0f, 4.0f, 0.0f, 10.0f);
-
-            DrawNGon(nGonSides, nGonAngle, nGonColour, nGonPosition, nGonScale);
         }
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         glfwSwapBuffers(windowHandle);
     }
 
     // Close ImGui
     {
-
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
     }
 
     return 0;
